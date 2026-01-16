@@ -1,0 +1,12 @@
+﻿Environment details for: node-task-env
+  Application name: node-task-app
+  Region: ap-south-1
+  Deployed Version: app-260113_225120680706
+  Environment ID: e-69dcqixqp6
+  Platform: arn:aws:elasticbeanstalk:ap-south-1::platform/Node.js 24 running on 64bit Amazon Linux 2023/6.7.1
+  Tier: WebServer-Standard-1.0
+  CNAME: node-task-env.eba-pajspfjq.ap-south-1.elasticbeanstalk.com
+  Updated: 2026-01-13 17:21:48.742000+00:00
+  Status: Ready
+  Health: Green
+Alert: An update to the EB CLI is available. Run "pip install --upgrade awsebcli" to get the latest version.
