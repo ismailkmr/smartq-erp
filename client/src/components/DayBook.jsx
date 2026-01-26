@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from 'react';
 import './DayBook.css';
 import API_URL from '../config';
@@ -357,6 +356,3 @@ function DayBook() {
 }
 
 export default DayBook;
-=======
-
->>>>>>> 6066dec37396780ebd4750e622e2f59dbf7d7d3c
