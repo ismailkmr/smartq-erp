@@ -1,0 +1,5 @@
+ Environment Variables:
+     DB_HOST = node-task-db.cr8mkwqu4d1m.ap-south-1.rds.amazonaws.com
+     DB_NAME = node_task_db
+     DB_PASSWORD = password123
+     DB_USER = admin

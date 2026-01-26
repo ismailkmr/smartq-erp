@@ -1,0 +1,14 @@
+{
+  "database": "node_task_db",
+  "tables": {
+    "users": [
+      {
+        "id": 1,
+        "name": "Fathima Ismail",
+        "email": "abc@qwe.com",
+        "password": "123456",
+        "created_at": "2026-01-26T09:50:15.000Z"
+      }
+    ]
+  }
+}

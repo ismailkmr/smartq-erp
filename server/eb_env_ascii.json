@@ -1,0 +1,28 @@
+{
+    "Environments": [
+        {
+            "EnvironmentName": "node-task-env",
+            "EnvironmentId": "e-69dcqixqp6",
+            "ApplicationName": "node-task-app",
+            "VersionLabel": "app-260119_100441051276",
+            "SolutionStackName": "64bit Amazon Linux 2023 v6.7.1 running Node.js 24",
+            "PlatformArn": "arn:aws:elasticbeanstalk:ap-south-1::platform/Node.js 24 running on 64bit Amazon Linux 2023/6.7.1",
+            "Description": "Environment created from the EB CLI using \"eb create\"",
+            "EndpointURL": "13.234.129.90",
+            "CNAME": "node-task-env.eba-pajspfjq.ap-south-1.elasticbeanstalk.com",
+            "DateCreated": "2026-01-13T17:16:27.968000+00:00",
+            "DateUpdated": "2026-01-19T04:35:17.777000+00:00",
+            "Status": "Ready",
+            "AbortableOperationInProgress": false,
+            "Health": "Green",
+            "HealthStatus": "Ok",
+            "Tier": {
+                "Name": "WebServer",
+                "Type": "Standard",
+                "Version": "1.0"
+            },
+            "EnvironmentLinks": [],
+            "EnvironmentArn": "arn:aws:elasticbeanstalk:ap-south-1:884232077284:environment/node-task-app/node-task-env"
+        }
+    ]
+}

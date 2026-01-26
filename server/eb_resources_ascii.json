@@ -1,0 +1,24 @@
+{
+    "EnvironmentResources": {
+        "EnvironmentName": "node-task-env",
+        "AutoScalingGroups": [
+            {
+                "Name": "awseb-e-69dcqixqp6-stack-AWSEBAutoScalingGroup-cbJsnK7On5tD"
+            }
+        ],
+        "Instances": [
+            {
+                "Id": "i-0269784bca107067f"
+            }
+        ],
+        "LaunchConfigurations": [],
+        "LaunchTemplates": [
+            {
+                "Id": "lt-0667deaf8017755a2"
+            }
+        ],
+        "LoadBalancers": [],
+        "Triggers": [],
+        "Queues": []
+    }
+}

@@ -1,16 +1,44 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
+import logo from '../assets/logo.png';
+import API_URL from '../config';
 
 function Login({ onLogin }) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('abc@qwe.com');
+    const [password, setPassword] = useState('123456');
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Simple validation
-        if (email && password) {
-            onLogin();
+        setError('');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                onLogin();
+                navigate('/dashboard');
+            } else {
+                setError(data.message || 'Login failed. Please try again.');
+            }
+        } catch (err) {
+            setError('Network error. Please try again later.');
+            console.error('Login error:', err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -19,15 +47,14 @@ function Login({ onLogin }) {
             <div className="login-card">
                 <div className="login-header">
                     <div className="logo">
-                        <div className="logo-icon">
-                            <span className="logo-bars"></span>
-                        </div>
+                        <img src={logo} alt="Doha ERP Logo" className="logo-img" />
                         <span className="logo-text">Doha ERP</span>
                     </div>
                     <h1 className="login-title">Login to your account</h1>
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-form">
+                    {error && <div className="error-message" style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
                         <input
@@ -62,14 +89,14 @@ function Login({ onLogin }) {
                         </div>
                     </div>
 
-                    <button type="submit" className="login-button">
-                        Login
+                    <button type="submit" className="login-button" disabled={isLoading}>
+                        {isLoading ? 'Logging in...' : 'Login'}
                     </button>
 
                     <div className="login-footer">
                         <a href="#" className="forgot-password">Forgot password?</a>
                         <div className="signup-link">
-                            Don't have an account? <a href="#">Create account</a>
+                            Don't have an account? <Link to="/register">Create account</Link>
                         </div>
                     </div>
                 </form>

@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import DayBook from './DayBook';
+import Ledger from './Ledger';
+import BalanceSheet from './BalanceSheet';
+import EmployeeManagement from './EmployeeManagement';
 import './Dashboard.css';
+import logo from '../assets/logo.png';
 
 function Dashboard({ onLogout }) {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
     const [showSettings, setShowSettings] = useState(false);
+    const [showUserMenu, setShowUserMenu] = useState(false);
 
     const menuItems = [
         { name: 'Dashboard', icon: '📊' },
@@ -20,7 +25,7 @@ function Dashboard({ onLogout }) {
     const transactions = [
         { date: '03. Feb. 20', description: 'Bat Place', amount: '$7,200', type: 'Income' },
         { date: '25. Jan. 20', description: 'Dat. Monax', amount: '$5,500', type: 'Expense' },
-        { date: '01. Oct. 20', date: '01. Oct. 20', description: 'Fraeldipames', amount: '$9,000', type: 'Expense' },
+        { date: '01. Oct. 20', description: 'Fraeldipames', amount: '$9,000', type: 'Expense' },
         { date: '28. Mar. 2020', description: 'Bood Gillitis', amount: '$8,000', type: 'Income' }
     ];
 
@@ -36,9 +41,7 @@ function Dashboard({ onLogout }) {
             <aside className="sidebar">
                 <div className="sidebar-header">
                     <div className="logo">
-                        <div className="logo-icon">
-                            <span className="logo-bars"></span>
-                        </div>
+                        <img src={logo} alt="Doha ERP Logo" className="logo-img" />
                         <span className="logo-text">Doha ERP</span>
                     </div>
                 </div>
@@ -70,48 +73,64 @@ function Dashboard({ onLogout }) {
 
             {/* Main Content */}
             <main className="main-content">
+                {/* Global Header */}
+                <header className="dashboard-header">
+                    <div className="header-left">
+                        <h1 className="page-title">{activeMenu}</h1>
+                    </div>
+                    <div className="header-right">
+                        <button className="header-button">
+                            <span className="icon">⚠️</span>
+                            <span>Enspees</span>
+                            <span className="dropdown-icon">▼</span>
+                        </button>
+                        <button className="header-button notification-btn">
+                            <span className="icon">🔔</span>
+                            <span className="notification-badge">3</span>
+                        </button>
+                        <div className="user-menu-container">
+                            <button className="header-button user-btn" onClick={() => setShowUserMenu(!showUserMenu)}>
+                                <span className="icon">👤</span>
+                                <span>Admin</span>
+                                <span className="dropdown-icon">{showUserMenu ? '▲' : '▼'}</span>
+                            </button>
+                            {showUserMenu && (
+                                <div className="user-dropdown-menu">
+                                    <button className="dropdown-item" onClick={onLogout}>
+                                        <span className="icon">🚪</span>
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </header>
+
                 {activeMenu === 'Day Book' ? (
                     <DayBook />
+                ) : activeMenu === 'Ledger' ? (
+                    <Ledger />
+                ) : activeMenu === 'Balance Sheet' ? (
+                    <BalanceSheet />
+                ) : activeMenu === 'Employees' ? (
+                    <EmployeeManagement />
                 ) : (
                     <>
-                        {/* Header */}
-                        <header className="dashboard-header">
-                            <div className="header-left">
-                                <h1 className="page-title">{activeMenu}</h1>
-                            </div>
-                            <div className="header-right">
-                                <button className="header-button">
-                                    <span className="icon">⚠️</span>
-                                    <span>Enspees</span>
-                                    <span className="dropdown-icon">▼</span>
-                                </button>
-                                <button className="header-button notification-btn">
-                                    <span className="icon">🔔</span>
-                                    <span className="notification-badge">3</span>
-                                </button>
-                                <button className="header-button user-btn" onClick={onLogout}>
-                                    <span className="icon">👤</span>
-                                    <span>Admin</span>
-                                    <span className="dropdown-icon">▼</span>
-                                </button>
-                            </div>
-                        </header>
-
                         {activeMenu === 'Dashboard' && (
                             <>
                                 {/* Metrics Cards */}
                                 <div className="metrics-grid">
-                                    <div className="metric-card">
+                                    <div className="metric-card income">
                                         <div className="metric-label">Total Income</div>
                                         <div className="metric-value">$12,500</div>
                                         <div className="metric-change positive">+1,200</div>
                                     </div>
-                                    <div className="metric-card">
+                                    <div className="metric-card expense">
                                         <div className="metric-label">Total Expense</div>
                                         <div className="metric-value expense">$7,200</div>
                                         <div className="metric-change negative">-1,025</div>
                                     </div>
-                                    <div className="metric-card">
+                                    <div className="metric-card balance">
                                         <div className="metric-label">Current Balance</div>
                                         <div className="metric-value balance">$5,300</div>
                                         <div className="metric-change positive">+175</div>
@@ -175,7 +194,7 @@ function Dashboard({ onLogout }) {
                             </>
                         )}
 
-                        {activeMenu !== 'Dashboard' && activeMenu !== 'Day Book' && (
+                        {activeMenu !== 'Dashboard' && activeMenu !== 'Day Book' && activeMenu !== 'Ledger' && activeMenu !== 'Employees' && (
                             <div className="placeholder-content">
                                 <h2>Coming Soon</h2>
                                 <p>The {activeMenu} module is under development.</p>

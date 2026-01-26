@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './DayBook.css';
+import API_URL from '../config';
 
 function DayBook() {
     const [entries, setEntries] = useState([
@@ -59,6 +60,86 @@ function DayBook() {
         }
     ]);
 
+    const [showForm, setShowForm] = useState(false);
+    const [formData, setFormData] = useState({
+        date: new Date().toISOString().split('T')[0],
+        voucherNo: '',
+        particulars: '',
+        type: 'debit',
+        amount: ''
+    });
+    const [file, setFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        const amount = parseFloat(formData.amount);
+        if (!amount || !formData.particulars || !formData.voucherNo) return;
+
+        setIsUploading(true);
+        let imageUrl = '';
+
+        if (file) {
+            const uploadData = new FormData();
+            uploadData.append('image', file);
+
+            try {
+                const response = await fetch(`${API_URL}/daybook/upload`, {
+                    method: 'POST',
+                    body: uploadData,
+                });
+                const result = await response.json();
+                if (result.success) {
+                    imageUrl = result.imageUrl;
+                }
+            } catch (error) {
+                console.error('File upload failed:', error);
+            }
+        }
+
+        const lastEntry = entries[0];
+        const lastBalance = lastEntry ? lastEntry.balance : 0;
+
+        let newBalance = lastBalance;
+        if (formData.type === 'debit') {
+            newBalance += amount;
+        } else {
+            newBalance -= amount;
+        }
+
+        const newEntry = {
+            id: Date.now(),
+            date: formData.date,
+            voucherNo: formData.voucherNo,
+            particulars: formData.particulars,
+            debit: formData.type === 'debit' ? amount : 0,
+            credit: formData.type === 'credit' ? amount : 0,
+            balance: newBalance,
+            image: imageUrl
+        };
+
+        setEntries([newEntry, ...entries]);
+        setShowForm(false);
+        setIsUploading(false);
+        setFile(null);
+        setFormData({
+            date: new Date().toISOString().split('T')[0],
+            voucherNo: '',
+            particulars: '',
+            type: 'debit',
+            amount: ''
+        });
+    };
+
     const [filterDate, setFilterDate] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -79,7 +160,7 @@ function DayBook() {
     return (
         <div className="daybook-container">
             <div className="daybook-header">
-                <h1 className="daybook-title">Day Book</h1>
+
                 <div className="daybook-actions">
                     <input
                         type="text"
@@ -94,7 +175,7 @@ function DayBook() {
                         value={filterDate}
                         onChange={(e) => setFilterDate(e.target.value)}
                     />
-                    <button className="btn-primary">
+                    <button className="btn-primary" onClick={() => setShowForm(true)}>
                         <span className="icon">➕</span>
                         New Entry
                     </button>
@@ -139,7 +220,16 @@ function DayBook() {
                                         year: 'numeric'
                                     })}</td>
                                     <td className="voucher-no">{entry.voucherNo}</td>
-                                    <td className="particulars">{entry.particulars}</td>
+                                    <td className="particulars">
+                                        {entry.particulars}
+                                        {entry.image && (
+                                            <div className="entry-attachment">
+                                                <a href={entry.image} target="_blank" rel="noopener noreferrer">
+                                                    View Attachment 📎
+                                                </a>
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="amount debit-amount">
                                         {entry.debit > 0 ? `$${entry.debit.toLocaleString()}` : '-'}
                                     </td>
@@ -180,6 +270,87 @@ function DayBook() {
                     </tfoot>
                 </table>
             </div>
+
+            {showForm && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h2>New Entry</h2>
+                            <button className="close-btn" onClick={() => setShowForm(false)}>×</button>
+                        </div>
+                        <form onSubmit={handleFormSubmit}>
+                            <div className="form-group">
+                                <label>Date</label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={formData.date}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Voucher No.</label>
+                                    <input
+                                        type="text"
+                                        name="voucherNo"
+                                        value={formData.voucherNo}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g. VCH007"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Type</label>
+                                    <select name="type" value={formData.type} onChange={handleInputChange}>
+                                        <option value="debit">Debit (In)</option>
+                                        <option value="credit">Credit (Out)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label>Particulars</label>
+                                <input
+                                    type="text"
+                                    name="particulars"
+                                    value={formData.particulars}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter description"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Amount</label>
+                                <input
+                                    type="number"
+                                    name="amount"
+                                    value={formData.amount}
+                                    onChange={handleInputChange}
+                                    placeholder="0.00"
+                                    step="0.01"
+                                    min="0"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Attachment (Image)</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+                            <div className="modal-actions">
+                                <button type="button" className="action-btn cancel" onClick={() => setShowForm(false)} disabled={isUploading}>Cancel</button>
+                                <button type="submit" className="action-btn save" disabled={isUploading}>
+                                    {isUploading ? 'Uploading...' : 'Save Entry'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
